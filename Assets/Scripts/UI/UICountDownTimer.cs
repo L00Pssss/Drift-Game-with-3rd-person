@@ -1,42 +1,61 @@
+using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class UICountDownTimer : MonoBehaviour
 {
-    [SerializeField] private RaceStateTracker m_raceStateTracker;
-    [SerializeField] private TextMeshProUGUI m_textMeshProUGUI;
+    [SerializeField] private RaceStateTracker _raceStateTracker;
+    [SerializeField] private TextMeshProUGUI _textMeshProUGUI;
+    
+    
+    private PlayerReferences _playerReferences;
+
+    public void Initialize(PlayerReferences playerReferences)
+    {
+        _playerReferences = playerReferences;
+        _raceStateTracker = _playerReferences.RaceStateTracker;
+        
+        _playerReferences.Player.PlayerInitialized += PlayerOnPlayerInitialized;
+    }
+
+    private void PlayerOnPlayerInitialized()
+    {
+        _raceStateTracker.Started += OnRaceStarted;
+        _raceStateTracker.PreparationStarted += OnPreparationStarted;
+    }
+
     private void Start()
     {
-        m_raceStateTracker.Started += OnRaceStarted;
-        m_raceStateTracker.PeparationStarted += OnPeparationStarted;
-        m_textMeshProUGUI.enabled = false;
+        _textMeshProUGUI.enabled = false;
     }
 
     private void OnDestroy()
     {
-        m_raceStateTracker.Started -= OnRaceStarted;
-        m_raceStateTracker.PeparationStarted -= OnPeparationStarted;
+        _raceStateTracker.Started -= OnRaceStarted;
+        _raceStateTracker.PreparationStarted -= OnPreparationStarted;
     }
 
-    private void OnPeparationStarted()
+    private void OnPreparationStarted()
     {
-        m_textMeshProUGUI.enabled = true;
+        _textMeshProUGUI.enabled = true;
         enabled = true;
     }
 
     private void OnRaceStarted()
     {
-        m_textMeshProUGUI.enabled = false;
+        _textMeshProUGUI.enabled = false;
         enabled = false;
     }
 
 
     private void Update()
     {
-        m_textMeshProUGUI.text = m_raceStateTracker.CountDownTimer.Value.ToString("F0"); // ��� �� �� ���� ���� ����� �������. 
+        if(_raceStateTracker == null) return;
+        _textMeshProUGUI.text = _raceStateTracker.CountDownTimer.Value.ToString("F0"); // ��� �� �� ���� ���� ����� �������. 
 
-        if (m_textMeshProUGUI.text == "0")
-            m_textMeshProUGUI.text = "GO!";
+        if (_textMeshProUGUI.text == "0")
+            _textMeshProUGUI.text = "GO!";
     }
 
 

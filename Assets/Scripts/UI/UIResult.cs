@@ -1,8 +1,6 @@
-using System;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class UIResult : MonoBehaviour
 {
@@ -15,15 +13,29 @@ public class UIResult : MonoBehaviour
 
     [SerializeField] private float _bonus = 2;
 
-    private void Start()
+    private PlayerReferences _playerReferences;
+
+    public void Initialize(PlayerReferences playerReferences)
     {
-        RewardedAdsButton.Instance.UpdateScore += InstanceOnUpdateScore;
+        _playerReferences = playerReferences;
+        _scoreManager = _playerReferences.ScoreManager ;
+        _raceStateTracker = _playerReferences.RaceStateTracker;
+        
+        _playerReferences.Player.PlayerInitialized += PlayerOnPlayerInitialized;
+    }
+
+    private void PlayerOnPlayerInitialized()
+    {
+        InterstitialIron.Instance.GrandUpdate += InstanceOnGrandUpdate;
         _raceStateTracker.Completed += RaceStateTrackerOnCompleted;
     }
+
     private void OnDestroy()
     {
-        RewardedAdsButton.Instance.UpdateScore -= InstanceOnUpdateScore;
+        InterstitialIron.Instance.GrandUpdate -= InstanceOnGrandUpdate;
         _raceStateTracker.Completed -= RaceStateTrackerOnCompleted;
+        _playerReferences.Player.PlayerInitialized -= PlayerOnPlayerInitialized;
+
     }
 
     
@@ -31,7 +43,7 @@ public class UIResult : MonoBehaviour
     {
         ShowPanel();
     }
-    private void InstanceOnUpdateScore()
+    private void InstanceOnGrandUpdate()
     {
         _textCash.text = "Cash For Drifting: " + _scoreManager.CalculateCash() * _bonus;
     }
@@ -41,11 +53,11 @@ public class UIResult : MonoBehaviour
         _panel.GameObject().SetActive(true);
         _textCash.text = "Cash For Drifting: " + _scoreManager.CalculateCash();
         _textPoint.text = "Points: " + _uiScore.Text.text;
-        RewardedAdsButton.Instance.LoadAd();
+        InterstitialIron.Instance.LoadRewarded();
     }
 
     public void RewardedAdClicked()
     {
-        RewardedAdsButton.Instance.ShowAd();
+        InterstitialIron.Instance.ShowRewarded();
     }
 }

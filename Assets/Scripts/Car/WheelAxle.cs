@@ -132,7 +132,6 @@ public class WheelAxle
         m_rightWheelCollider.brakeTorque = brakeTorque;
     }
     
-    //private
     private void SyncMeshTransform()
     {
         UpdateWhellTransform(m_leftWheelCollider, m_leftWheelMesh);
@@ -168,27 +167,15 @@ public class WheelAxle
 
         if (m_leftWheelCollider.isGrounded == true)
         {
-            m_leftWheelCollider.attachedRigidbody.AddForceAtPosition(m_leftWheelCollider.transform.up * 
-                                                                     -forceDirection * antiRollForce, m_leftWheelCollider.transform.position);
+            Vector3 force = m_leftWheelCollider.transform.up * (-forceDirection) * antiRollForce;
+            m_leftWheelCollider.attachedRigidbody.AddForceAtPosition(force, m_leftWheelCollider.transform.position);
         } 
 
         if (m_rightWheelCollider.isGrounded == true)
         {
-            m_rightWheelCollider.attachedRigidbody.AddForceAtPosition(m_rightWheelCollider.transform.up * 
-                                                                      forceDirection * antiRollForce, m_rightWheelCollider.transform.position);
+            Vector3 force = m_rightWheelCollider.transform.up * forceDirection * antiRollForce;
+            m_rightWheelCollider.attachedRigidbody.AddForceAtPosition(force, m_rightWheelCollider.transform.position);
         }
     }
     
-    
-    /*public void ConfigureVehicleSubsteps(float speedThreshold, int speedBelowThreshold, int stepsAboveThreshold)
-    {
-        m_leftWheelCollider.ConfigureVehicleSubsteps(speedThreshold, speedBelowThreshold, stepsAboveThreshold);
-        m_rightWheelCollider.ConfigureVehicleSubsteps(speedThreshold, speedBelowThreshold, stepsAboveThreshold);
-    }
-
-    private void UpdateWheelHits()
-    {
-        m_leftWheelCollider.GetGroundHit(out leftWheelHit);
-        m_rightWheelCollider.GetGroundHit(out rightWeelHit);
-    }*/
 }

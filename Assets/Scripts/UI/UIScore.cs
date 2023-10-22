@@ -7,16 +7,31 @@ public class UIScore : MonoBehaviour
     [SerializeField] private  ScoreManager _scoreManagerComponent;
     [SerializeField] private TextMeshProUGUI _text;
 
-    public TextMeshProUGUI Text => _text;
+    
+    
+    private PlayerReferences _playerReferences;
 
-    private void Start()
+    public void Initialize(PlayerReferences playerReferences)
+    {
+        _playerReferences = playerReferences;
+        _scoreManagerComponent = _playerReferences.ScoreManager;
+        
+        _playerReferences.Player.PlayerInitialized += PlayerOnPlayerInitialized;
+    }
+
+    private void PlayerOnPlayerInitialized()
     {
         _scoreManagerComponent.UpdateScore += ScoreManagerComponentOnUpdateScore;
     }
 
+    public TextMeshProUGUI Text => _text;
+    
+
     private void OnDestroy()
     {
         _scoreManagerComponent.UpdateScore -= ScoreManagerComponentOnUpdateScore;
+        
+        _playerReferences.Player.PlayerInitialized -= PlayerOnPlayerInitialized;
 
     }
 

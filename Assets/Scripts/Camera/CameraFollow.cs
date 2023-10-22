@@ -1,48 +1,67 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
 
 public class CameraFollow : MonoBehaviour
 {
+    public static CameraFollow Instance;
+    
     [Header("Offset")] 
-    [SerializeField] private float m_viewHight;
-    [SerializeField] private float m_hight;
-    [SerializeField] private float m_distance;
-
+    [SerializeField] private float _viewHight;
+    [SerializeField] private float _hight;
+    [SerializeField] private float _distance;
+    
     [Header("Damping")]
-    [SerializeField] private float m_rotationDamping;
-    [SerializeField] private float m_heightDamping;
-    [SerializeField] private float m_speedThreshold;
+    [SerializeField] private float _rotationDamping;
+    [SerializeField] private float _heightDamping;
+    [SerializeField] private float _speedThreshold;
 
-    [SerializeField] private Transform m_target;
-    [SerializeField] private Rigidbody m_rigidbody;
+    [SerializeField] private Transform _target; // for debug
+    [SerializeField] private Rigidbody _rigidbody;
+    
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
 
+        Instance = this;
+    }
 
     private void FixedUpdate()
     {
-        Vector3 velocity = m_rigidbody.velocity;
-        Vector3 targetRotation = m_target.eulerAngles;
+        if (_target == null || _rigidbody == null) return;
+        Vector3 velocity = _rigidbody.velocity;
+        Vector3 targetRotation = _target.eulerAngles;
 
-        if (velocity.magnitude > m_speedThreshold)
+        if (velocity.magnitude > _speedThreshold)
         {
             targetRotation = Quaternion.LookRotation(velocity, Vector3.up).eulerAngles;
         }
         
         float currentAngel = Mathf.LerpAngle(transform.eulerAngles.y, targetRotation.y,
-            m_rotationDamping * Time.fixedDeltaTime);
+            _rotationDamping * Time.fixedDeltaTime);
         
-        float currentHeight = Mathf.Lerp(transform.position.y, m_target.position.y + m_hight,
-            m_heightDamping * Time.fixedDeltaTime);
+        float currentHeight = Mathf.Lerp(transform.position.y, _target.position.y + _hight,
+            _heightDamping * Time.fixedDeltaTime);
         
         Vector3
             positionOffset =
                 Quaternion.Euler(0, currentAngel, 0) * Vector3.forward *
-                m_distance; 
-        transform.position = m_target.position + positionOffset;
+                _distance; 
+        transform.position = _target.position + positionOffset;
         
         transform.position = new Vector3(transform.position.x, currentHeight, transform.position.z);
 
         // Rotation
-        transform.LookAt(m_target.position + new Vector3(0, m_viewHight, 0));
+        transform.LookAt(_target.position + new Vector3(0, _viewHight, 0));
+    }
+    
+    
+    public void SetTarget(Transform newTarget, Rigidbody newRigidbody)
+    {
+        _target = newTarget;
+        _rigidbody = newRigidbody;
     }
 }

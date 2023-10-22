@@ -1,7 +1,4 @@
-﻿namespace DefaultNamespace
-{
-    public interface IDependency<T>
+﻿public interface IDependency<T>
     {
         void Construct(T obj);
     }
-}

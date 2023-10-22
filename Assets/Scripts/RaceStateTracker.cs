@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 public enum RaceState
 {
     Passed,
-    CoundDown,
+    CountDown,
     Race,
     Preparation
 }
@@ -15,13 +16,12 @@ public class RaceStateTracker : MonoBehaviour
 {
     public event UnityAction Started;
     public event UnityAction Completed;
-    public event UnityAction PeparationStarted;
+    public event UnityAction PreparationStarted;
     
-    [SerializeField] private Timer m_countdownTimer;
+    [SerializeField] private Timer _countDownTimer;
     [SerializeField] private Timer raceTimer;
 
-    
-    public Timer CountDownTimer => m_countdownTimer;
+    public Timer CountDownTimer => _countDownTimer;
     public Timer RaceTimer => raceTimer;
     
     private RaceState state;
@@ -31,10 +31,10 @@ public class RaceStateTracker : MonoBehaviour
     {
         StartState(RaceState.Preparation);
         
-        m_countdownTimer.enabled = false;
+        _countDownTimer.enabled = false;
         raceTimer.enabled = false;
         
-        m_countdownTimer.Finished += OnCountdownTimerFinished;
+        _countDownTimer.Finished += OnCountdownTimerFinished;
         
         raceTimer.Finished += OnRaceTimerFinished;
 
@@ -42,7 +42,7 @@ public class RaceStateTracker : MonoBehaviour
 
     private void OnDestroy()
     {
-        m_countdownTimer.Finished -= OnCountdownTimerFinished;
+        _countDownTimer.Finished -= OnCountdownTimerFinished;
         
         raceTimer.Finished -= OnRaceTimerFinished;
 
@@ -63,11 +63,11 @@ public class RaceStateTracker : MonoBehaviour
     }
     private void StartRace()
     {
-        if (state != RaceState.CoundDown) return;
+        if (state != RaceState.CountDown) return;
         StartState(RaceState.Race);
-
+        
         Started?.Invoke();
-
+        
         raceTimer.enabled = true;
     }
     
@@ -80,12 +80,13 @@ public class RaceStateTracker : MonoBehaviour
     }
     
     public void StartRaceTimer()
-    {
+    { ;
         if (state != RaceState.Preparation) return;
-        StartState(RaceState.CoundDown);
+        
+        StartState(RaceState.CountDown);
 
-        m_countdownTimer.enabled = true;
-        PeparationStarted?.Invoke();
+        _countDownTimer.enabled = true;
+        PreparationStarted?.Invoke();
     }
     
     

@@ -17,9 +17,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     [SerializeField] private Transform _content;
 
     [SerializeField] private GameObject _PanelPhoton;
+    [SerializeField] private GameObject _Buttnos;
+    
 
+    [SerializeField] private Player _player;
 
     private List<RoomInfo> allRoomsInfo = new List<RoomInfo>();
+    
     
     private void Start()
     {
@@ -54,8 +58,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public override void OnCreatedRoom()
     {
         Debug.Log("Create room is complete: " + PhotonNetwork.CurrentRoom.Name);
-
-
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -85,10 +87,14 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         _PanelPhoton.SetActive(false);
+        _Buttnos.SetActive(true);
+        PhotonNetwork.Instantiate(_player.name, transform.position, Quaternion.identity);
     }
 
-    public void JounButton()
+    public void JoinButton()
     {
         PhotonNetwork.JoinRoom(_roomName.text);
+
+
     }
 }

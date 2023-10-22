@@ -55,19 +55,6 @@ public class WheelEffect : MonoBehaviour
                         // Игнорируем незначительное скольжение
                         continue;
                     }
-                    // Определяем направление скольжения
-                    bool isLeftSlip = wheelHit.sidewaysSlip < 0f;
-
-                    /*if (isLeftSlip)
-                    {
-                        Debug.Log("Скольжение колеса " + i + " влево: " + wheelHit.forwardSlip + " (вперед), " + wheelHit.sidewaysSlip + " (боковое)");
-                        // Здесь добавьте логику для левого скольжения
-                    }
-                    else
-                    {
-                        Debug.Log("Скольжение колеса " + i + " вправо: " + wheelHit.forwardSlip + " (вперед), " + wheelHit.sidewaysSlip + " (боковое)");
-                        // Здесь добавьте логику для правого скольжения
-                    }*/
 
                     if (skidTrail[i] == null)
                     {

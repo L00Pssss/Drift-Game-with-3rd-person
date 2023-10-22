@@ -3309,5 +3309,8 @@ namespace Photon.Pun
 
         #endif
 
+        public class PrefabRegistry
+        {
+        }
     }
 }

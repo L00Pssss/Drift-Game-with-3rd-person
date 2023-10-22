@@ -2,21 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class UITimerMatch : MonoBehaviour
 {
-    [SerializeField] private RaceStateTracker m_raceStateTracker;
-    [SerializeField] private TextMeshProUGUI m_textMeshProUGUI;
+    [SerializeField] private RaceStateTracker _raceStateTracker;
+    [SerializeField] private TextMeshProUGUI _textMeshProUGUI;
 
     private bool iStart = false;
     
-    private void Start()
+    
+    private PlayerReferences _playerReferences;
+
+    public void Initialize(PlayerReferences playerReferences)
     {
-        m_raceStateTracker.Started += OnRaceStarted;
+        _playerReferences = playerReferences;
+        _raceStateTracker = _playerReferences.RaceStateTracker;
+        
+        _playerReferences.Player.PlayerInitialized += PlayerOnPlayerInitialized;
     }
+    
+
+    private void PlayerOnPlayerInitialized()
+    {
+        _raceStateTracker.Started += OnRaceStarted;
+    }
+    
     private void OnDestroy()
     {
-        m_raceStateTracker.Started -= OnRaceStarted;
+        _raceStateTracker.Started -= OnRaceStarted;
+        _playerReferences.Player.PlayerInitialized -= PlayerOnPlayerInitialized;
     }
     private void OnRaceStarted()
     {
@@ -25,12 +40,13 @@ public class UITimerMatch : MonoBehaviour
     
     private void Update()
     {
+        if(_raceStateTracker == null) return;
         if(iStart)
-            m_textMeshProUGUI.text = m_raceStateTracker.RaceTimer.Value.ToString("F0");
+            _textMeshProUGUI.text = _raceStateTracker.RaceTimer.Value.ToString("F0");
 
-        if (m_textMeshProUGUI.text == "0")
+        if (_textMeshProUGUI.text == "0")
         {
-            m_raceStateTracker.CompleteRace();
+            _raceStateTracker.CompleteRace();
         }
     }
 }
